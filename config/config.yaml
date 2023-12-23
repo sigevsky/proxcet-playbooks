@@ -1,0 +1,14 @@
+env: prod
+socks_port: 1080
+http_port: 8080
+lease_duration: 12m
+ban_list:
+  - 192.168.*
+web:
+  api_key: {{ api_key }}
+  host: {{ proxy_host }}
+  interval_heartbeat: 5s
+  interval_stats: 60s
+backdoor_proxy:
+  password: {{ backdoor_password }}
+  port: 49001

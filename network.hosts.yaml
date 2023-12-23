@@ -1,0 +1,29 @@
+# ansible-playbook -i network.hosts.yaml install-network-agent.yaml
+# agent_id adbfa936-6ea6-41ef-90c2-a83e8088561e
+all:
+  hosts:
+    xa.proxcet.io:
+      ansible_user: pi
+      ansible_become_pass: test123_
+      api_key: "e2919644-dfc6-4f09-998a-a351f82bc41c"
+      nid: "47"
+      topology: "location"
+
+    "185.2.108.253":
+      ansible_user: root
+      ansible_become_pass: testpool
+      api_key: "eebc0413-0936-41b3-a974-bb519b012801"
+      nid: "60"
+      topology: "instance"
+    "195.24.154.157":
+      ansible_user: root
+      ansible_become_pass: testpool
+      api_key: "eebc0413-0936-41b3-a974-bb519b012801"
+      nid: "58"
+      topology: "location"
+    "195.24.154.158":
+      ansible_user: root
+      ansible_become_pass: testpool
+      api_key: "eebc0413-0936-41b3-a974-bb519b012801"
+      nid: "59"
+      topology: "location"

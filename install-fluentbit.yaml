@@ -1,0 +1,74 @@
+---
+- hosts: all
+  vars:
+    fluent_bit_config_elastic: "./config/fluent-bit-elastic.conf"
+    fluent_bit_parser_config: "./config/parsers.conf"
+
+    elastic_host: gw.proxcet.io
+    elastic_port: 9200
+    elastic_user: proxcet_ingest
+    elastic_password: EEzi9V5Q6E
+  tasks:
+    - name: Detect architecture
+      ansible.builtin.command: uname -m
+      register: arch
+
+    - name: Download Fluent Bit APT key
+      get_url:
+        url: https://packages.fluentbit.io/fluentbit.key
+        dest: "/tmp/fluentbit.key"
+
+    - name: Install Fluent Bit APT key
+      shell: |
+        gpg --dearmor < /tmp/fluentbit.key > /usr/share/keyrings/fluentbit-keyring.gpg
+      args:
+        creates: /usr/share/keyrings/fluentbit-keyring.gpg
+
+    - name: Add Fluent Bit APT key
+      apt_key:
+        url: https://packages.fluentbit.io/fluentbit.key
+        state: present
+      become: yes
+
+    - name: Add Fluent Bit APT repository
+      apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/fluentbit-keyring.gpg] https://packages.fluentbit.io/ubuntu/{{ ansible_distribution_release }} {{ ansible_distribution_release }} main"
+        state: present
+      register: fluentbit_repo
+      become: yes
+
+    - name: Update APT cache if repo was added
+      apt:
+        update_cache: yes
+      when: fluentbit_repo.changed
+      become: yes
+
+    - name: Install Fluent Bit
+      apt:
+        name: fluent-bit
+        state: latest
+      become: yes
+
+    - name: Apply fluentbit config
+      ansible.builtin.template:
+        src: "{{ fluent_bit_config_elastic }}"
+        dest: "/etc/fluent-bit/fluent-bit.conf"
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
+
+    - name: Apply fluentbit parser config
+      ansible.builtin.copy:
+        src: "{{ fluent_bit_parser_config }}"
+        dest: "/etc/fluent-bit/parsers.conf"
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
+
+    - name: Restart fluentbit service
+      ansible.builtin.systemd:
+        name: fluent-bit
+        state: restarted
+      become: yes

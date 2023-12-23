@@ -1,0 +1,24 @@
+{
+  "agent_key": "agent_key",
+  "api_host": "api_host",
+  "arch": "arch",
+  "level": "level",
+  "os": "os",
+  "target": "target",
+  "fields": {
+    "message": "message",
+    "username": "username",
+    "device_id": "device_id",
+    "error": "error",
+    "internal_ip": "internal_ip"
+  },
+  "span": {
+    "client_id": "client_id",
+    "destributed": "destributed",
+    "hardware": "hardware",
+    "hostname": "hostname",
+    "name": "name",
+    "req_type": "req_type",
+    "to_addr": "to_addr"
+  }
+}

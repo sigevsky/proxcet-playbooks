@@ -1,0 +1,17 @@
+[Unit]
+Description="Proxcet Network Agent"
+After=network.target
+
+[Service]
+User=root
+Group=root
+ExecStart=/usr/sbin/network-agent
+Nice=5
+KillSignal=TERM
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=60
+PermissionsStartOnly=true
+
+[Install]
+WantedBy=multi-user.target

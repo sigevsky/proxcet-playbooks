@@ -1,29 +1,66 @@
 # ansible-playbook -i network.hosts.yaml install-network-agent.yaml
+# ansible-playbook -i network.hosts.yaml install-agent.yaml
 # agent_id adbfa936-6ea6-41ef-90c2-a83e8088561e
 all:
   hosts:
-    xa.proxcet.io:
-      ansible_user: pi
-      ansible_become_pass: test123_
-      api_key: "e2919644-dfc6-4f09-998a-a351f82bc41c"
-      nid: "47"
-      topology: "location"
+#    xa.proxcet.io:
+#      ansible_user: pi
+#      ansible_become_pass: test123_
+#      api_key: "e2919644-dfc6-4f09-998a-a351f82bc41c"
+#      nid: 47
+#      topology: "instance"
+#
+#    "ins-1.zavod.kyiv":
+#      ansible_host: 194.183.181.128
+#      ansible_user: root
+#      ansible_become_pass: 1NST@nce
+#      ansible_port: 22
+#      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+#      nid: 42
+#      topology: "instance"
 
-    "185.2.108.253":
-      ansible_user: root
-      ansible_become_pass: testpool
-      api_key: "eebc0413-0936-41b3-a974-bb519b012801"
-      nid: "60"
+    "ins-2.datacenter.kyiv":
+      ansible_host: 77.88.197.150
+      ansible_user: dev
+      ansible_become_pass: NewDevP@ssw0rd
+      ansible_port: 22
+      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+      nid: 83
       topology: "instance"
-    "195.24.154.157":
-      ansible_user: root
-      ansible_become_pass: testpool
-      api_key: "eebc0413-0936-41b3-a974-bb519b012801"
-      nid: "58"
-      topology: "location"
-    "195.24.154.158":
-      ansible_user: root
-      ansible_become_pass: testpool
-      api_key: "eebc0413-0936-41b3-a974-bb519b012801"
-      nid: "59"
-      topology: "location"
+#
+#    "loc-42.zavod.kyiv":
+#      ansible_host: 194.183.181.129
+#      ansible_user: root
+#      ansible_become_pass: 1NST@nce
+#      ansible_port: 22
+#      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+#      nid: "42"
+#      topology: "location"
+#
+#    "loc-70.zavod.kyiv":
+#      ansible_host: 194.183.181.129
+#      ansible_user: root
+#      ansible_become_pass: 1NST@nce
+#      ansible_port: 222
+#      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+#      nid: "70"
+#      topology: "location"
+#
+#    "021.loc":
+#      ansible_host: 194.183.181.127
+#      ansible_user: root
+#      ansible_become_pass: srv20reboot20
+#      ansible_port: 22
+#      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+#      nid: "78"
+#      topology: "location"
+
+#    "starlink":
+#      ansible_host: 100.90.46.60
+#      ansible_user: root
+#      ansible_become_pass: reboot3355
+#      ansible_port: 22
+#      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+#      nid: "95"
+#      topology: "location"
+

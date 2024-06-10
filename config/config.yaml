@@ -1,7 +1,8 @@
-env: prod
+log:
+  format: compact
+  output: stdout
 socks_port: 1080
 http_port: 8080
-lease_duration: 12m
 ban_list:
   - 192.168.*
 web:
@@ -10,6 +11,9 @@ web:
   instance_id: {{ nid }}
   interval_heartbeat: 5s
   interval_stats: 60s
+device_state:
+  type: "coordinated"
+  host: https://coord.proxcet.io
 backdoor_proxy:
   password: {{ backdoor_password }}
   port: 49001

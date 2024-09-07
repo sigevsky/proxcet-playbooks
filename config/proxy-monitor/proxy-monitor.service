@@ -1,0 +1,12 @@
+[Unit]
+Description=Monitoring Script Service
+After=network.target
+
+[Service]
+ExecStart=python3 {{ python_script }}
+WorkingDirectory={{ script_path }}
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

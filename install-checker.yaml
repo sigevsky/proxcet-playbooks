@@ -1,0 +1,57 @@
+---
+- name: Install and run Python script
+  hosts: all
+  become: yes
+  vars:
+    script_path: /opt/proxy_monitoring
+    python_script: "{{ script_path }}/proxy-monitor.py"
+    systemd_service: proxy_monitor_service
+
+    proxy_monitoring_service_service_file: "./config/proxy-monitor/proxy-monitor.service"
+    proxy_monitoring_script_file: "./config/proxy-monitor/proxy-monitor.py"
+
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - python3
+          - python3-pip
+          - python3-requests-toolbelt
+          - python3-prometheus-client
+          - python3-requests
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: Create script directory
+      file:
+        path: "{{ script_path }}"
+        state: directory
+        mode: '0755'
+
+    - name: Add Python script
+      ansible.builtin.template:
+        src: "{{ proxy_monitoring_script_file }}"
+        dest: "{{ python_script }}"
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
+
+    - name: Add binary to systemctl
+      ansible.builtin.template:
+        src: "{{ proxy_monitoring_service_service_file }}"
+        dest: "/etc/systemd/system/{{ systemd_service }}.service"
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start monitoring script service
+      systemd:
+        name: "{{ systemd_service }}"
+        state: started
+        enabled: yes

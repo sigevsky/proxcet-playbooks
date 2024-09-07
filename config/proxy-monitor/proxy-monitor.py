@@ -12,11 +12,11 @@ from requests.adapters import HTTPAdapter
 from requests_toolbelt.adapters import source
 
 # Configuration
-# API_KEY = "0a7243c9-13f8-4959-aedf-69584fefda8c"
-# AGENT_ID = "e895f776-e5e0-41f6-906f-aa45fe5dfc40"
+API_KEY = "0a7243c9-13f8-4959-aedf-69584fefda8c"
+AGENT_ID = "e895f776-e5e0-41f6-906f-aa45fe5dfc40"
 
-API_KEY = "f388a0a8-13f1-44cc-b72d-eed08f6adffb"
-AGENT_ID = "8513f528-11ad-430f-8f09-68aa5fe6ca4e"
+# API_KEY = "f388a0a8-13f1-44cc-b72d-eed08f6adffb"
+# AGENT_ID = "8513f528-11ad-430f-8f09-68aa5fe6ca4e"
 
 topology = "{{ topology }}"
 nid = int("{{ nid }}")

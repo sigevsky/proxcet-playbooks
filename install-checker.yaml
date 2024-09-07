@@ -50,6 +50,12 @@
       systemd:
         daemon_reload: yes
 
+    - name: Restart service
+      ansible.builtin.systemd:
+        name: "{{ systemd_service }}"
+        state: restarted
+      become: yes
+
     - name: Enable and start monitoring script service
       systemd:
         name: "{{ systemd_service }}"

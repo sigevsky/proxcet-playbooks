@@ -5,7 +5,7 @@
   vars:
     script_path: /opt/proxy_monitoring
     python_script: "{{ script_path }}/proxy-monitor.py"
-    systemd_service: proxy_monitor_service
+    systemd_service: ip-monitor
 
     proxy_monitoring_service_service_file: "./config/proxy-monitor/proxy-monitor.service"
     proxy_monitoring_script_file: "./config/proxy-monitor/proxy-monitor.py"

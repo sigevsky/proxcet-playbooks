@@ -3,6 +3,11 @@ log:
   output: stdout
 socks_port: 1080
 http_port: 8080
+prometheus_port: 7878
+health:
+  interval: 20s
+  healthy_threshold: 80
+  unhealthy_threshold: 30
 ban_list:
   - 192.168.*
 web:

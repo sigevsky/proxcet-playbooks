@@ -3,12 +3,12 @@
 # agent_id adbfa936-6ea6-41ef-90c2-a83e8088561e
 all:
   hosts:
-#    xa.proxcet.io:
-#      ansible_user: pi
-#      ansible_become_pass: test123_
-#      api_key: "e2919644-dfc6-4f09-998a-a351f82bc41c"
-#      nid: 47
-#      topology: "instance"
+    test-server:
+      ansible_host: 185.2.110.214
+      ansible_user: root
+      api_key: "2a70e571-4255-4694-baf9-64dd0b5070bf"
+      nid: 141
+      topology: "instance"
 #
 #    "ins-1.zavod.kyiv":
 #      ansible_host: 194.183.181.128
@@ -55,14 +55,14 @@ all:
 #      nid: "78"
 #      topology: "location"
 
-    "020.loc":
-      ansible_host: 100.122.177.12
-      ansible_user: root
-      ansible_become_pass: srv20reboot20
-      ansible_port: 22
-      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
-      nid: "91"
-      topology: "location"
+#    "020.loc":
+#      ansible_host: 100.122.177.12
+#      ansible_user: root
+#      ansible_become_pass: srv20reboot20
+#      ansible_port: 22
+#      api_key: "b87397a2-a39e-4be3-b82a-c62eca44cccf"
+#      nid: "91"
+#      topology: "location"
 
 #    "starlink":
 #      ansible_host: 100.90.46.60

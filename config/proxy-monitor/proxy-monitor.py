@@ -82,7 +82,7 @@ def fetch_bind_devices() -> list:
                 "server_name": device["location"]["name"],
                 "bind": "local",
                 "operator": next(
-                    (t["value"] for t in devices[0]["tags"] if t["value"] in ["vodafone", "kyivstar", "life"]),
+                    (t["value"] for t in devices[0]["tags"] if t["value"] in ["vodafone", "kyivstar", "Life"]),
                     "unknown"),
                 "tier": next((t["value"] for t in devices[0]["tags"] if t["value"] in ["standard", "premium"]),
                              "unknown"),

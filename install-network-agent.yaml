@@ -6,8 +6,8 @@
     manual_url_64: "https://misc.proxcet.io/proxy/bin/network-agent-amd64.tar.gz"
     manual_url_arm_64: "https://misc.proxcet.io/proxy/bin/network-agent-arm64.tar.gz"
 
-    network_agent_config: "./config/network.config.yaml"
-    network_agent_service: "./config/network-agent.service"
+    network_agent_config: "./config/network-agent/config.yaml"
+    network_agent_service: "./config/network-agent/network-agent.service"
   tasks:
     - name: Enable IPv4 forwarding in sysctl
       ansible.builtin.lineinfile:

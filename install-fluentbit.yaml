@@ -1,8 +1,8 @@
 ---
 - hosts: all
   vars:
-    fluent_bit_config_elastic: "./config/fluent-bit-elastic.conf"
-    fluent_bit_parser_config: "./config/parsers.conf"
+    fluent_bit_config_elastic: "./config/fluent-bit/fluent-bit-elastic.conf"
+    fluent_bit_parser_config: "./config/fluent-bit/parsers.conf"
 
     elastic_host: gw.proxcet.io
     elastic_port: 9200

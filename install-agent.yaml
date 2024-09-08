@@ -7,9 +7,9 @@
     manual_url_arm: "https://misc.proxcet.io/proxy/bin/proxy-agent-armv7.tar.gz"
     manual_url_arm_64: "https://misc.proxcet.io/proxy/bin/proxy-agent-aarch64.tar.gz"
 
-    proxy_agent_config: "./config/config.yaml"
-    proxy_agent_service: "./config/proxy-agent.service"
-    logrotate_config: "./config/logrotate.conf"
+    proxy_agent_config: "./config/proxy-agent/config.yaml"
+    proxy_agent_service: "./config/proxy-agent/proxy-agent.service"
+    logrotate_config: "./config/proxy-agent/logrotate.conf"
 
     log_level: "INFO"
   tasks:

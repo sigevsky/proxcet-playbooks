@@ -26,6 +26,6 @@ ip_providers:
   - https://ipinfo.io/ip
   - https://europe-central2-proxybox-project.cloudfunctions.net/ip
 otlp:
-  url: https://gw.proxcet.io:8200
+  url: https://apm.uasocks.net:443
   headers:
     Authorization: "Bearer Tkl2QldJa0JDczZ4SE5LMThRclA6dEgtSzlXSC1TRmVQZU45WFFRMU5FQQ=="

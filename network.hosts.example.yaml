@@ -3,10 +3,10 @@
 # agent_id adbfa936-6ea6-41ef-90c2-a83e8088561e
 all:
   hosts:
-    xa.proxcet.io:
+    "raspberrypi.local":
       ansible_user: pi
-      ansible_become_pass: not_real_password
-      api_key: "196ea1ea-117c-4941-88fe-9254064e31ad"
-      nid: 144
+      ansible_become_pass: test123_
+      api_key: "some-api-key"
+      nid: 168
       topology: "instance"
-      proxy_agent_version: "0.0.18"
+      proxy_agent_version: 0.2.8

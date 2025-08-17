@@ -1,30 +1,7 @@
 log:
   format: compact
   output: stdout
-socks_port: 1080
-http_port: 8080
-health:
-  interval: 20s
-  healthy_threshold: 80
-  unhealthy_threshold: 30
-ban_list:
-  - 192.168.*
 web:
   api_key: {{ api_key }}
   host: {{ proxy_host }}
   instance_id: {{ nid }}
-  interval_heartbeat: 5s
-  interval_stats: 60s
-device_state:
-  type: "coordinated"
-  host: https://coord.proxcet.io
-backdoor_proxy:
-  password: {{ backdoor_password }}
-  port: 49001
-ip_providers:
-  - https://ipinfo.io/ip
-  - https://europe-central2-proxybox-project.cloudfunctions.net/ip
-otlp:
-  url: https://apm.uasocks.net:443
-  headers:
-    Authorization: "Bearer Tkl2QldJa0JDczZ4SE5LMThRclA6dEgtSzlXSC1TRmVQZU45WFFRMU5FQQ=="

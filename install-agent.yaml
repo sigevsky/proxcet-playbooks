@@ -2,12 +2,12 @@
 - hosts: all
   vars:
     proxy_host: "https://agent.proxcet.io"
-    base_download_url: "https://misc.proxcet.io/proxy/bin"
+    base_download_url: "https://s3.proxcet.io/proxcet/proxy/bin"
     default_proxy_agent_version: ""
 
-    manual_url_64: "https://misc.proxcet.io/proxy/bin/proxy-agent-amd64.tar.gz"
-    manual_url_arm: "https://misc.proxcet.io/proxy/bin/proxy-agent-armv7.tar.gz"
-    manual_url_arm_64: "https://misc.proxcet.io/proxy/bin/proxy-agent-aarch64.tar.gz"
+    manual_url_64: "https://s3.proxcet.io/proxcet/proxy/bin/proxy-agent-amd64.tar.gz"
+    manual_url_arm: "https://s3.proxcet.io/proxcet/proxy/bin/proxy-agent-armv7.tar.gz"
+    manual_url_arm_64: "https://s3.proxcet.io/proxcet/proxy/bin/proxy-agent-aarch64.tar.gz"
 
     proxy_agent_config: "./config/proxy-agent/config.yaml"
     proxy_agent_service: "./config/proxy-agent/proxy-agent.service"

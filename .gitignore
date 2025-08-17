@@ -3,3 +3,4 @@ venv
 /workspace.xml
 /.idea
 .idea
+network.hosts.yaml

@@ -3,8 +3,8 @@
   vars:
     proxy_host: "agent.proxcet.io:443"
 
-    manual_url_64: "https://misc.proxcet.io/proxy/bin/network-agent-amd64.tar.gz"
-    manual_url_arm_64: "https://misc.proxcet.io/proxy/bin/network-agent-arm64.tar.gz"
+    manual_url_64: "https://s3.proxcet.io/proxcet/proxy/bin/network-agent-amd64.tar.gz"
+    manual_url_arm_64: "https://s3.proxcet.io/proxcet/proxy/bin/network-agent-arm64.tar.gz"
 
     network_agent_config: "./config/network-agent/config.yaml"
     network_agent_service: "./config/network-agent/network-agent.service"

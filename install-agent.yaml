@@ -4,6 +4,7 @@
     proxy_host: "https://agent.proxcet.io"
     base_download_url: "https://s3.proxcet.io/proxcet/proxy/bin"
     default_proxy_agent_version: ""
+    default_service_name: "proxy-agent"
 
     manual_url_64: "https://s3.proxcet.io/proxcet/proxy/bin/proxy-agent-amd64.tar.gz"
     manual_url_arm: "https://s3.proxcet.io/proxcet/proxy/bin/proxy-agent-armv7.tar.gz"
@@ -18,6 +19,10 @@
     - name: Set agent version
       set_fact:
         proxy_agent_version: "{{ proxy_agent_version | default(default_proxy_agent_version) }}"
+
+    - name: Set service name
+      set_fact:
+        service_name: "{{ service_name | default(default_service_name) }}"
 
     - name: Gather OS fact
       setup:
@@ -55,13 +60,13 @@
         remote_src: yes
 
     - name: Move agent binary to destination
-      ansible.builtin.command: mv /tmp/proxy-agent /usr/sbin/proxy-agent
+      ansible.builtin.command: mv /tmp/proxy-agent /usr/sbin/{{ service_name }}
       become: yes
 
     - name: Add binary to systemctl
       ansible.builtin.template:
         src: "{{ proxy_agent_service }}"
-        dest: "/etc/systemd/system/proxy-agent.service"
+        dest: "/etc/systemd/system/{{ service_name }}.service"
         owner: root
         group: root
         mode: 0644
@@ -75,9 +80,9 @@
       set_fact:
         backdoor_password: "{{ random_hash.stdout }}"
 
-    - name: Ensure /etc/proxy-agent directory exists
+    - name: Ensure config directory exists
       ansible.builtin.file:
-        path: /etc/proxy-agent
+        path: /etc/{{ service_name }}
         state: directory
         owner: root
         group: root
@@ -87,7 +92,7 @@
     - name: Configure proxy-agent
       ansible.builtin.template:
         src: "{{ proxy_agent_config }}"
-        dest: "/etc/proxy-agent/config.yaml"
+        dest: "/etc/{{ service_name }}/config.yaml"
         owner: root
         group: root
         mode: 0644
@@ -95,21 +100,21 @@
 
     - name: Enable and start service
       ansible.builtin.systemd:
-        name: proxy-agent
+        name: "{{ service_name }}"
         enabled: yes
         state: started
       become: yes
 
     - name: Restart service
       ansible.builtin.systemd:
-        name: proxy-agent
+        name: "{{ service_name }}"
         state: restarted
       become: yes
 
     - name: Configure logrotate
-      ansible.builtin.copy:
+      ansible.builtin.template:
         src: "{{ logrotate_config }}"
-        dest: "/etc/logrotate.d/proxy-agent"
+        dest: "/etc/logrotate.d/{{ service_name }}"
         owner: root
         group: root
         mode: 0644

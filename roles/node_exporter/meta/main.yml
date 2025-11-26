@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: sigevsky
+  description: Node Exporter wrapper role with architecture detection
+  license: MIT
+  min_ansible_version: "2.9"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies:
+  - role: common

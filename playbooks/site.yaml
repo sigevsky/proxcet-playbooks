@@ -1,0 +1,30 @@
+---
+# Master playbook - installs all agents on their respective hosts
+#
+# Usage:
+#   ansible-playbook -i inventories/production playbooks/site.yaml
+#   ansible-playbook -i inventories/production playbooks/site.yaml --tags proxy-agent
+
+- name: Install Proxy Agent
+  hosts: proxy_agents
+  become: true
+  tags: proxy-agent
+
+  roles:
+    - role: proxy_agent
+
+- name: Install Network Agent
+  hosts: network_agents
+  become: true
+  tags: network-agent
+
+  roles:
+    - role: network_agent
+
+- name: Install Node Exporter
+  hosts: node_exporters
+  become: true
+  tags: node-exporter
+
+  roles:
+    - role: node_exporter

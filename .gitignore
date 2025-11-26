@@ -1,6 +1,9 @@
 venv
-/shelf/
-/workspace.xml
-/.idea
 .idea
-network.hosts.yaml
+.DS_Store
+
+# Ansible cache
+.ansible_cache/
+
+# Sensitive inventory - uncomment if you want to keep passwords out of git
+inventories/production/hosts.yaml

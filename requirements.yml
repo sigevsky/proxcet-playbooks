@@ -1,0 +1,7 @@
+---
+# Ansible Galaxy requirements file
+# Install with: ansible-galaxy install -r requirements.yml
+
+roles:
+  - name: geerlingguy.node_exporter
+    version: 1.0.2

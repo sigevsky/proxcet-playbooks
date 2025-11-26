@@ -1,0 +1,13 @@
+---
+# Install Node Exporter on hosts in node_exporters group
+#
+# Usage:
+#   ansible-playbook -i inventories/production playbooks/node-exporter.yaml
+#   ansible-playbook -i inventories/production playbooks/node-exporter.yaml --limit ukraine2
+
+- name: Install Node Exporter
+  hosts: node_exporters
+  become: true
+
+  roles:
+    - role: node_exporter

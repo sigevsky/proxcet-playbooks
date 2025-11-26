@@ -1,0 +1,17 @@
+---
+# Network Agent handlers
+
+- name: Apply sysctl changes
+  ansible.builtin.command: /sbin/sysctl -p
+  become: true
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: Restart network-agent
+  ansible.builtin.systemd:
+    name: network-agent
+    state: restarted
+  become: true

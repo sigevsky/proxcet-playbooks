@@ -1,0 +1,48 @@
+---
+# Node Exporter installation tasks
+# Wraps the geerlingguy.node_exporter role with arch detection
+
+- name: Include common role for arch detection
+  ansible.builtin.include_role:
+    name: common
+
+- name: Set node_exporter architecture
+  ansible.builtin.set_fact:
+    node_exporter_arch: >-
+      {%- if arch_armv7 -%}armv7
+      {%- elif arch_arm64 -%}arm64
+      {%- else -%}amd64
+      {%- endif -%}
+
+- name: Display node_exporter configuration
+  ansible.builtin.debug:
+    msg:
+      - "Node Exporter Version: {{ node_exporter_version }}"
+      - "Architecture: {{ node_exporter_arch }}"
+      - "Listen Address: {{ node_exporter_host }}:{{ node_exporter_port }}"
+
+- name: Include geerlingguy.node_exporter role
+  ansible.builtin.include_role:
+    name: geerlingguy.node_exporter
+
+- name: Wait for node_exporter to be ready
+  ansible.builtin.wait_for:
+    host: "{{ node_exporter_host }}"
+    port: "{{ node_exporter_port }}"
+    delay: 2
+    timeout: 30
+    state: started
+  when: node_exporter_host != 'localhost'
+
+- name: Verify node_exporter is responding
+  ansible.builtin.uri:
+    url: "http://{{ node_exporter_host if node_exporter_host != '0.0.0.0' else 'localhost' }}:{{ node_exporter_port }}/metrics"
+    method: GET
+    status_code: 200
+  register: metrics_check
+  ignore_errors: true
+
+- name: Display verification result
+  ansible.builtin.debug:
+    msg: "Node exporter is running and responding to metrics requests"
+  when: metrics_check is success

@@ -1,0 +1,21 @@
+[Unit]
+Description="Proxy Agent{% if proxy_agent_service_name != 'proxy-agent' %} - {{ proxy_agent_service_name }}{% endif %}"
+After=network.target
+
+[Service]
+User=root
+Group=root
+Environment="RUST_LOG={{ proxy_agent_log_level }}"
+Environment="PROXY_WEB_CONFIG_LOCATION=/etc/{{ proxy_agent_service_name }}/config.yaml"
+ExecStart=/usr/sbin/{{ proxy_agent_service_name }}
+Nice=5
+KillSignal=TERM
+Restart=on-failure
+RestartSec=30
+TimeoutStopSec=60
+StandardOutput=journal
+StandardError=journal
+LimitNOFILE=262144
+
+[Install]
+WantedBy=multi-user.target

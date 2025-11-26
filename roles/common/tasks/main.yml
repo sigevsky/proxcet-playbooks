@@ -1,0 +1,18 @@
+---
+# Common tasks shared across agent roles
+
+- name: Gather OS facts
+  ansible.builtin.setup:
+    filter: ansible_distribution
+
+- name: Detect system architecture
+  ansible.builtin.command: uname -m
+  register: arch_result
+  changed_when: false
+
+- name: Set architecture facts
+  ansible.builtin.set_fact:
+    system_arch: "{{ arch_result.stdout }}"
+    arch_amd64: "{{ arch_result.stdout == 'x86_64' }}"
+    arch_arm64: "{{ arch_result.stdout == 'aarch64' }}"
+    arch_armv7: "{{ arch_result.stdout == 'armv7l' or arch_result.stdout == 'armv7' }}"

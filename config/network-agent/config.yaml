@@ -1,7 +1,0 @@
-coordinator:
-  host: {{ proxy_host }}
-  api_key: {{ api_key }}
-  id: {{ nid }}
-  is_plaintext: false
-  topology: {{ topology }}
-sync_interval: 30s

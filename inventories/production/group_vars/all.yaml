@@ -1,0 +1,8 @@
+---
+# Variables shared across all hosts
+
+# Default topology for all agents
+topology: location
+
+# Common SSH settings
+ansible_ssh_common_args: '-o StrictHostKeyChecking=no'

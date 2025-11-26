@@ -1,0 +1,93 @@
+---
+# Proxy Agent installation tasks
+
+- name: Include common role for arch detection
+  ansible.builtin.include_role:
+    name: common
+
+- name: Set architecture string for download
+  ansible.builtin.set_fact:
+    proxy_agent_arch_string: >-
+      {%- if arch_amd64 -%}amd64
+      {%- elif arch_armv7 -%}armv7
+      {%- elif arch_arm64 -%}aarch64
+      {%- else -%}unknown
+      {%- endif -%}
+
+- name: Construct download URL
+  ansible.builtin.set_fact:
+    proxy_agent_download_url: "{{ proxy_agent_base_download_url }}/proxy-agent-{{ proxy_agent_arch_string }}{{ '-' + proxy_agent_version if proxy_agent_version != '' else '' }}.tar.gz"
+
+- name: Display download URL
+  ansible.builtin.debug:
+    msg: "Downloading proxy-agent from: {{ proxy_agent_download_url }}"
+
+- name: Download proxy-agent
+  ansible.builtin.get_url:
+    url: "{{ proxy_agent_download_url }}"
+    dest: /tmp/proxy-agent.tar.gz
+    mode: '0644'
+
+- name: Extract proxy-agent
+  ansible.builtin.unarchive:
+    src: /tmp/proxy-agent.tar.gz
+    dest: /tmp
+    remote_src: true
+
+- name: Install proxy-agent binary
+  ansible.builtin.copy:
+    src: /tmp/proxy-agent
+    dest: "/usr/sbin/{{ proxy_agent_service_name }}"
+    remote_src: true
+    mode: '0755'
+    owner: root
+    group: root
+  become: true
+  notify: Restart proxy-agent
+
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    path: "/etc/{{ proxy_agent_service_name }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Deploy proxy-agent configuration
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "/etc/{{ proxy_agent_service_name }}/config.yaml"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify: Restart proxy-agent
+
+- name: Deploy systemd service
+  ansible.builtin.template:
+    src: proxy-agent.service.j2
+    dest: "/etc/systemd/system/{{ proxy_agent_service_name }}.service"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify:
+    - Reload systemd
+    - Restart proxy-agent
+
+- name: Enable and start proxy-agent service
+  ansible.builtin.systemd:
+    name: "{{ proxy_agent_service_name }}"
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+
+- name: Clean up temporary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/proxy-agent.tar.gz
+    - /tmp/proxy-agent

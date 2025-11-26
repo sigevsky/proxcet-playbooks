@@ -1,7 +1,0 @@
-log:
-  format: compact
-  output: stdout
-web:
-  api_key: {{ api_key }}
-  host: {{ proxy_host }}
-  instance_id: {{ nid }}

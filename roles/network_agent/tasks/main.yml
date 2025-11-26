@@ -1,0 +1,110 @@
+---
+# Network Agent installation tasks
+
+- name: Include common role for arch detection
+  ansible.builtin.include_role:
+    name: common
+
+- name: Enable IPv4 forwarding
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^#?net.ipv4.ip_forward='
+    line: 'net.ipv4.ip_forward=1'
+  become: true
+  when: network_agent_enable_ipv4_forwarding
+  notify: Apply sysctl changes
+
+- name: Enable IPv6 forwarding
+  ansible.builtin.lineinfile:
+    path: /etc/sysctl.conf
+    regexp: '^#?net.ipv6.conf.all.forwarding='
+    line: 'net.ipv6.conf.all.forwarding=1'
+  become: true
+  when: network_agent_enable_ipv6_forwarding
+  notify: Apply sysctl changes
+
+- name: Flush handlers to apply sysctl changes
+  ansible.builtin.meta: flush_handlers
+
+- name: Set download URL based on architecture
+  ansible.builtin.set_fact:
+    network_agent_download_url: >-
+      {%- if arch_amd64 -%}{{ network_agent_base_download_url }}/network-agent-amd64.tar.gz
+      {%- elif arch_arm64 -%}{{ network_agent_base_download_url }}/network-agent-arm64.tar.gz
+      {%- elif arch_armv7 -%}{{ network_agent_base_download_url }}/network-agent-armv7.tar.gz
+      {%- else -%}unsupported
+      {%- endif -%}
+
+- name: Display download URL
+  ansible.builtin.debug:
+    msg: "Downloading network-agent from: {{ network_agent_download_url }}"
+
+- name: Download network-agent
+  ansible.builtin.get_url:
+    url: "{{ network_agent_download_url }}"
+    dest: /tmp/network-agent.tar.gz
+    mode: '0644'
+
+- name: Extract network-agent
+  ansible.builtin.unarchive:
+    src: /tmp/network-agent.tar.gz
+    dest: /tmp
+    remote_src: true
+
+- name: Install network-agent binary
+  ansible.builtin.copy:
+    src: /tmp/network-agent
+    dest: /usr/sbin/network-agent
+    remote_src: true
+    mode: '0755'
+    owner: root
+    group: root
+  become: true
+  notify: Restart network-agent
+
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    path: /etc/network-agent
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Deploy network-agent configuration
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /etc/network-agent/config.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify: Restart network-agent
+
+- name: Deploy systemd service
+  ansible.builtin.template:
+    src: network-agent.service.j2
+    dest: /etc/systemd/system/network-agent.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify:
+    - Reload systemd
+    - Restart network-agent
+
+- name: Enable and start network-agent service
+  ansible.builtin.systemd:
+    name: network-agent
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+
+- name: Clean up temporary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/network-agent.tar.gz
+    - /tmp/network-agent

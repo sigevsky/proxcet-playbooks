@@ -1,0 +1,13 @@
+---
+# Install Network Agent on hosts in network_agents group
+#
+# Usage:
+#   ansible-playbook -i inventories/production playbooks/network-agent.yaml
+#   ansible-playbook -i inventories/production playbooks/network-agent.yaml --limit goproxy1
+
+- name: Install Network Agent
+  hosts: network_agents
+  become: true
+
+  roles:
+    - role: network_agent

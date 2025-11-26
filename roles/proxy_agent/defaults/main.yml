@@ -1,0 +1,17 @@
+---
+# Proxy Agent defaults
+
+proxy_agent_service_name: proxy-agent
+proxy_agent_version: ""  # Empty means latest
+
+proxy_agent_proxy_host: "https://agent.proxcet.io"
+proxy_agent_base_download_url: "https://s3.proxcet.io/proxcet/proxy/bin"
+
+proxy_agent_log_level: INFO
+proxy_agent_log_format: compact
+proxy_agent_log_output: stdout
+
+# These must be provided per-host in inventory
+# api_key: ""
+# nid: ""
+# topology: "location"

@@ -1,12 +1,11 @@
 ---
 # Node Exporter installation tasks
-# Wraps the geerlingguy.node_exporter role with arch detection
 
 - name: Include common role for arch detection
   ansible.builtin.include_role:
     name: common
 
-- name: Set node_exporter architecture
+- name: Set node_exporter architecture string
   ansible.builtin.set_fact:
     node_exporter_arch: >-
       {%- if arch_armv7 -%}armv7
@@ -21,22 +20,107 @@
       - "Architecture: {{ node_exporter_arch }}"
       - "Listen Address: {{ node_exporter_host }}:{{ node_exporter_port }}"
 
-- name: Include geerlingguy.node_exporter role
-  ansible.builtin.include_role:
-    name: geerlingguy.node_exporter
+# Node Exporter installation
+- name: Check if node_exporter is installed
+  ansible.builtin.stat:
+    path: /usr/local/bin/node_exporter
+  register: node_exporter_binary
+
+- name: Get installed node_exporter version
+  ansible.builtin.command: /usr/local/bin/node_exporter --version
+  register: node_exporter_installed_version
+  changed_when: false
+  failed_when: false
+  when: node_exporter_binary.stat.exists
+
+- name: Set version check fact
+  ansible.builtin.set_fact:
+    node_exporter_needs_install: >-
+      {{ not node_exporter_binary.stat.exists or
+         node_exporter_version not in (node_exporter_installed_version.stderr | default('')) }}
+
+- name: Download node_exporter
+  ansible.builtin.get_url:
+    url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}.tar.gz"
+    dest: /tmp/node_exporter.tar.gz
+    mode: '0644'
+  when: node_exporter_needs_install
+
+- name: Extract node_exporter
+  ansible.builtin.unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /tmp
+    remote_src: true
+  when: node_exporter_needs_install
+
+- name: Install node_exporter binary
+  ansible.builtin.copy:
+    src: "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}/node_exporter"
+    dest: /usr/local/bin/node_exporter
+    remote_src: true
+    mode: '0755'
+    owner: root
+    group: root
+  become: true
+  when: node_exporter_needs_install
+  notify: Restart node_exporter
+
+- name: Create node_exporter group
+  ansible.builtin.group:
+    name: node_exporter
+    system: true
+    state: present
+  become: true
+
+- name: Create node_exporter user
+  ansible.builtin.user:
+    name: node_exporter
+    group: node_exporter
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+  become: true
+
+- name: Deploy node_exporter systemd service
+  ansible.builtin.template:
+    src: node-exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+  notify:
+    - Reload systemd
+    - Restart node_exporter
+
+- name: Enable and start node_exporter service
+  ansible.builtin.systemd:
+    name: node_exporter
+    enabled: true
+    state: started
+    daemon_reload: true
+  become: true
+
+- name: Clean up node_exporter temporary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /tmp/node_exporter.tar.gz
+    - "/tmp/node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}"
+  when: node_exporter_needs_install
 
 - name: Wait for node_exporter to be ready
   ansible.builtin.wait_for:
-    host: "{{ node_exporter_host }}"
+    host: "{{ '127.0.0.1' if node_exporter_host == '0.0.0.0' else node_exporter_host }}"
     port: "{{ node_exporter_port }}"
     delay: 2
     timeout: 30
     state: started
-  when: node_exporter_host != 'localhost'
 
 - name: Verify node_exporter is responding
   ansible.builtin.uri:
-    url: "http://{{ node_exporter_host if node_exporter_host != '0.0.0.0' else 'localhost' }}:{{ node_exporter_port }}/metrics"
+    url: "http://{{ 'localhost' if node_exporter_host == '0.0.0.0' else node_exporter_host }}:{{ node_exporter_port }}/metrics"
     method: GET
     status_code: 200
   register: metrics_check
@@ -62,17 +146,37 @@
           - "Architecture: {{ otel_arch }}"
           - "Destination: {{ otel_host }}"
 
+    - name: Check if otelcol-contrib is installed
+      ansible.builtin.stat:
+        path: /usr/local/bin/otelcol-contrib
+      register: otelcol_binary
+
+    - name: Get installed otelcol-contrib version
+      ansible.builtin.command: /usr/local/bin/otelcol-contrib --version
+      register: otelcol_installed_version
+      changed_when: false
+      failed_when: false
+      when: otelcol_binary.stat.exists
+
+    - name: Set OTEL version check fact
+      ansible.builtin.set_fact:
+        otelcol_needs_install: >-
+          {{ not otelcol_binary.stat.exists or
+             otel_collector_version not in (otelcol_installed_version.stdout | default('')) }}
+
     - name: Download otelcol-contrib
       ansible.builtin.get_url:
         url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_collector_version }}/otelcol-contrib_{{ otel_collector_version }}_{{ otel_arch }}.tar.gz"
         dest: /tmp/otelcol-contrib.tar.gz
         mode: '0644'
+      when: otelcol_needs_install
 
     - name: Extract otelcol-contrib
       ansible.builtin.unarchive:
         src: /tmp/otelcol-contrib.tar.gz
         dest: /tmp
         remote_src: true
+      when: otelcol_needs_install
 
     - name: Install otelcol-contrib binary
       ansible.builtin.copy:
@@ -83,6 +187,7 @@
         owner: root
         group: root
       become: true
+      when: otelcol_needs_install
       notify: Restart otel-collector
 
     - name: Create OTEL config directory
@@ -131,3 +236,4 @@
       loop:
         - /tmp/otelcol-contrib.tar.gz
         - /tmp/otelcol-contrib
+      when: otelcol_needs_install

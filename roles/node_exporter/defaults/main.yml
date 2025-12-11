@@ -1,13 +1,9 @@
 ---
 # Node Exporter defaults
-# These map to geerlingguy.node_exporter role variables
 
 node_exporter_version: "1.10.1"
-node_exporter_arch: "amd64"
 node_exporter_host: "0.0.0.0"
 node_exporter_port: 9100
-node_exporter_enabled: true
-node_exporter_state: started
 
 # OTEL Collector (optional - set both otel_host and otel_token to enable)
 otel_host: ""                        # gRPC endpoint, e.g. "otel.example.com:4317"

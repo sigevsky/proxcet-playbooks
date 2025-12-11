@@ -11,7 +11,10 @@ processors:
   resource:
     attributes:
       - key: host.name
-        value: "{{ ansible_hostname }}"
+        value: "{{ inventory_hostname }}"
+        action: upsert
+      - key: job
+        value: "general"
         action: upsert
 
 exporters:

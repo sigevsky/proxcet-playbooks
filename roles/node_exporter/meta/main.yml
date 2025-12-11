@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: sigevsky
-  description: Node Exporter wrapper role with architecture detection
+  description: Install Node Exporter and optional OTEL Collector
   license: MIT
   min_ansible_version: "2.9"
   platforms:

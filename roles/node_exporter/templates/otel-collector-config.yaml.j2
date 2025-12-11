@@ -16,6 +16,9 @@ processors:
       - key: job
         value: "general"
         action: upsert
+      - key: instance
+        value: "{{ inventory_hostname }}"
+        action: upsert
 
 exporters:
   otlp:

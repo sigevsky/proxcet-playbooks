@@ -1,0 +1,13 @@
+---
+# Handlers for node_exporter role
+
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: Restart otel-collector
+  ansible.builtin.systemd:
+    name: otelcol-contrib
+    state: restarted
+  become: true

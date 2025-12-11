@@ -46,3 +46,88 @@
   ansible.builtin.debug:
     msg: "Node exporter is running and responding to metrics requests"
   when: metrics_check is success
+
+# OTEL Collector installation (optional)
+- name: Install OTEL Collector
+  when: otel_host != "" and otel_token != ""
+  block:
+    - name: Set OTEL architecture string
+      ansible.builtin.set_fact:
+        otel_arch: "{{ 'linux_arm64' if arch_arm64 else 'linux_amd64' }}"
+
+    - name: Display OTEL Collector configuration
+      ansible.builtin.debug:
+        msg:
+          - "OTEL Collector Version: {{ otel_collector_version }}"
+          - "Architecture: {{ otel_arch }}"
+          - "Destination: {{ otel_host }}"
+
+    - name: Download otelcol-contrib
+      ansible.builtin.get_url:
+        url: "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v{{ otel_collector_version }}/otelcol-contrib_{{ otel_collector_version }}_{{ otel_arch }}.tar.gz"
+        dest: /tmp/otelcol-contrib.tar.gz
+        mode: '0644'
+
+    - name: Extract otelcol-contrib
+      ansible.builtin.unarchive:
+        src: /tmp/otelcol-contrib.tar.gz
+        dest: /tmp
+        remote_src: true
+
+    - name: Install otelcol-contrib binary
+      ansible.builtin.copy:
+        src: /tmp/otelcol-contrib
+        dest: /usr/local/bin/otelcol-contrib
+        remote_src: true
+        mode: '0755'
+        owner: root
+        group: root
+      become: true
+      notify: Restart otel-collector
+
+    - name: Create OTEL config directory
+      ansible.builtin.file:
+        path: /etc/otelcol-contrib
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      become: true
+
+    - name: Deploy OTEL Collector configuration
+      ansible.builtin.template:
+        src: otel-collector-config.yaml.j2
+        dest: /etc/otelcol-contrib/config.yaml
+        owner: root
+        group: root
+        mode: '0644'
+      become: true
+      notify: Restart otel-collector
+
+    - name: Deploy OTEL Collector systemd service
+      ansible.builtin.template:
+        src: otel-collector.service.j2
+        dest: /etc/systemd/system/otelcol-contrib.service
+        owner: root
+        group: root
+        mode: '0644'
+      become: true
+      notify:
+        - Reload systemd
+        - Restart otel-collector
+
+    - name: Enable and start OTEL Collector service
+      ansible.builtin.systemd:
+        name: otelcol-contrib
+        enabled: true
+        state: started
+        daemon_reload: true
+      become: true
+
+    - name: Clean up OTEL temporary files
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /tmp/otelcol-contrib.tar.gz
+        - /tmp/otelcol-contrib

@@ -1,0 +1,30 @@
+receivers:
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'node_exporter'
+          scrape_interval: {{ otel_scrape_interval }}
+          static_configs:
+            - targets: ['localhost:{{ node_exporter_port }}']
+
+processors:
+  resource:
+    attributes:
+      - key: host.name
+        value: "{{ ansible_hostname }}"
+        action: upsert
+
+exporters:
+  otlp:
+    endpoint: "{{ otel_host }}"
+    headers:
+      Authorization: "Bearer {{ otel_token }}"
+    tls:
+      insecure: false
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: [resource]
+      exporters: [otlp]

@@ -1,0 +1,13 @@
+[Unit]
+Description=OpenTelemetry Collector Contrib
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/otelcol-contrib --config /etc/otelcol-contrib/config.yaml
+Restart=on-failure
+RestartSec=10
+User=root
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

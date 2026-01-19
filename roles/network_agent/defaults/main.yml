@@ -7,6 +7,9 @@ network_agent_base_download_url: "https://s3.proxcet.io/proxcet/proxy/bin"
 network_agent_sync_interval: "30s"
 network_agent_is_plaintext: false
 
+# WireGuard MTU (optional, defaults to 1500 in network-agent if not set)
+# network_agent_mtu: 1420
+
 # IP forwarding settings
 network_agent_enable_ipv4_forwarding: true
 network_agent_enable_ipv6_forwarding: true

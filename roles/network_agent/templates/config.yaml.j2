@@ -4,4 +4,7 @@ coordinator:
   id: {{ nid }}
   is_plaintext: {{ network_agent_is_plaintext | lower }}
   topology: {{ topology }}
+{% if network_agent_mtu is defined %}
+  mtu: {{ network_agent_mtu }}
+{% endif %}
 sync_interval: {{ network_agent_sync_interval }}

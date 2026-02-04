@@ -26,14 +26,18 @@
 - name: Flush handlers to apply sysctl changes
   ansible.builtin.meta: flush_handlers
 
-- name: Set download URL based on architecture
+- name: Set architecture string for download
   ansible.builtin.set_fact:
-    network_agent_download_url: >-
-      {%- if arch_amd64 -%}{{ network_agent_base_download_url }}/network-agent-amd64.tar.gz
-      {%- elif arch_arm64 -%}{{ network_agent_base_download_url }}/network-agent-arm64.tar.gz
-      {%- elif arch_armv7 -%}{{ network_agent_base_download_url }}/network-agent-armv7.tar.gz
-      {%- else -%}unsupported
+    network_agent_arch_string: >-
+      {%- if arch_amd64 -%}amd64
+      {%- elif arch_arm64 -%}arm64
+      {%- elif arch_armv7 -%}armv7
+      {%- else -%}unknown
       {%- endif -%}
+
+- name: Construct download URL
+  ansible.builtin.set_fact:
+    network_agent_download_url: "{{ network_agent_base_download_url }}/network-agent-{{ network_agent_arch_string }}{{ '-' + network_agent_version if network_agent_version != '' else '' }}.tar.gz"
 
 - name: Display download URL
   ansible.builtin.debug:

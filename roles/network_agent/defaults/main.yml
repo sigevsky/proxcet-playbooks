@@ -1,6 +1,8 @@
 ---
 # Network Agent defaults
 
+network_agent_version: ""  # Empty means latest
+
 network_agent_proxy_host: "agent.proxcet.io:443"
 network_agent_base_download_url: "https://s3.proxcet.io/proxcet/proxy/bin"
 

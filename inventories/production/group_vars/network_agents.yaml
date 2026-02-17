@@ -3,5 +3,6 @@
 
 network_agent_proxy_host: "agent.proxcet.io:443"
 network_agent_sync_interval: "30s"
+network_agent_discovery_interval: "60s"
 network_agent_enable_ipv4_forwarding: true
 network_agent_enable_ipv6_forwarding: true

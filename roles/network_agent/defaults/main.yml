@@ -7,6 +7,7 @@ network_agent_proxy_host: "agent.proxcet.io:443"
 network_agent_base_download_url: "https://s3.proxcet.io/proxcet/proxy/bin"
 
 network_agent_sync_interval: "30s"
+network_agent_discovery_interval: "60s"
 network_agent_is_plaintext: false
 
 # WireGuard MTU (optional, defaults to 1500 in network-agent if not set)

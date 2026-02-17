@@ -30,7 +30,7 @@
   ansible.builtin.set_fact:
     network_agent_arch_string: >-
       {%- if arch_amd64 -%}amd64
-      {%- elif arch_arm64 -%}arm64
+      {%- elif arch_arm64 -%}aarch64
       {%- elif arch_armv7 -%}armv7
       {%- else -%}unknown
       {%- endif -%}

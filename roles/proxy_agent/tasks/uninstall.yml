@@ -1,0 +1,33 @@
+---
+# Uninstall Proxy Agent
+
+- name: Stop {{ proxy_agent_service_name }} service
+  ansible.builtin.systemd:
+    name: "{{ proxy_agent_service_name }}"
+    state: stopped
+  ignore_errors: true
+
+- name: Disable {{ proxy_agent_service_name }} service
+  ansible.builtin.systemd:
+    name: "{{ proxy_agent_service_name }}"
+    enabled: false
+  ignore_errors: true
+
+- name: Remove systemd service file
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ proxy_agent_service_name }}.service"
+    state: absent
+
+- name: Remove {{ proxy_agent_service_name }} binary
+  ansible.builtin.file:
+    path: "/usr/sbin/{{ proxy_agent_service_name }}"
+    state: absent
+
+- name: Remove {{ proxy_agent_service_name }} config directory
+  ansible.builtin.file:
+    path: "/etc/{{ proxy_agent_service_name }}"
+    state: absent
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true

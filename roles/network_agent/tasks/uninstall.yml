@@ -1,0 +1,33 @@
+---
+# Uninstall Network Agent
+
+- name: Stop network-agent service
+  ansible.builtin.systemd:
+    name: network-agent
+    state: stopped
+  ignore_errors: true
+
+- name: Disable network-agent service
+  ansible.builtin.systemd:
+    name: network-agent
+    enabled: false
+  ignore_errors: true
+
+- name: Remove systemd service file
+  ansible.builtin.file:
+    path: /etc/systemd/system/network-agent.service
+    state: absent
+
+- name: Remove network-agent binary
+  ansible.builtin.file:
+    path: /usr/sbin/network-agent
+    state: absent
+
+- name: Remove network-agent config directory
+  ansible.builtin.file:
+    path: /etc/network-agent
+    state: absent
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true

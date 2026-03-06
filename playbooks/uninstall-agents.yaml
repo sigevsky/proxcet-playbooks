@@ -1,0 +1,30 @@
+---
+# Uninstall agents from their respective hosts
+#
+# Usage:
+#   ansible-playbook -i inventories/production playbooks/uninstall-agents.yaml
+#   ansible-playbook -i inventories/production playbooks/uninstall-agents.yaml --tags proxy-agent
+#   ansible-playbook -i inventories/production playbooks/uninstall-agents.yaml --tags network-agent
+#   ansible-playbook -i inventories/production playbooks/uninstall-agents.yaml --limit goproxy-main
+
+- name: Uninstall Proxy Agent
+  hosts: proxy_agents
+  become: true
+  tags: proxy-agent
+
+  tasks:
+    - name: Run proxy agent uninstall
+      ansible.builtin.include_role:
+        name: proxy_agent
+        tasks_from: uninstall
+
+- name: Uninstall Network Agent
+  hosts: network_agents
+  become: true
+  tags: network-agent
+
+  tasks:
+    - name: Run network agent uninstall
+      ansible.builtin.include_role:
+        name: network_agent
+        tasks_from: uninstall
